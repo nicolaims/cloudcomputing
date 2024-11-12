@@ -1,53 +1,60 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
 
-<div class="text-center">
-    <h1 class="display-4">Kantinens menu uge 45 - hvide monner til 10 kr.</h1>
-    <p class="lead">Velkommen til IBAS kantinen</p>
-    <p>Her kan du se hvad vi har på menuen i denne uge.</p>
-    <p>Vi har åbent fra kl. 11:00 til 13:00</p>
-    <p>Vi glæder os til at se dig.</p>
-    <p>Velbekomme.</p>
-</div>
-<table class = sleek-table>
-    <thead>
-        <tr>
-            <th>Day</th>
-            <th>Cold Dish</th>
-            <th>Hot Dish</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.MenuItems)
-        {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Items</title>
+</head>
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Kantinens menu uge 45 - hvide monner til 10 kr.</h1>
+        <p class="lead">Velkommen til IBAS kantinen</p>
+        <p>Her kan du se hvad vi har på menuen i denne uge.</p>
+        <p>Vi har åbent fra kl. 11:00 til 13:00</p>
+        <p>Vi glæder os til at se dig.</p>
+        <p>Velbekomme.</p>
+    </div>
+    <table class="sleek-table">
+        <thead>
             <tr>
-                <td>@item.RowKey</td>
-                <td>@item.ColdDish</td>
-                <td>@item.HotDish</td>
+                <th>Day</th>
+                <th>Cold Dish</th>
+                <th>Hot Dish</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.MenuItems)
+            {
+                <tr>
+                    <td>@item.RowKey</td>
+                    <td>@item.ColdDish</td>
+                    <td>@item.HotDish</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<style>
-    .sleek-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 18px;
-        text-align: left;
-    }
-    .sleek-table tr {
-        background-color: #f9f9f9;
-        border-bottom: 1px solid #ddd;
-    }
-    .sleek-table tr:hover {
-        background-color: #f1f1f1;
-    }
-    .sleek-table td {
-        padding: 12px 15px;
-    }
-</style>
+    <style>
+        .sleek-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        .sleek-table tr {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+        .sleek-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .sleek-table td {
+            padding: 12px 15px;
+        }
+    </style>
+</body>
+</html>

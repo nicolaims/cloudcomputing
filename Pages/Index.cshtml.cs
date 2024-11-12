@@ -1,31 +1,58 @@
+using Azure.Identity;
 using Azure.Data.Tables;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using Azure;
 
 public class IndexModel : PageModel
 {
-    public required List<MenuItem> MenuItems { get; set; }
+    public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
 
-    public void OnGet()
+    private readonly TableClient _tableClient;
+
+    public IndexModel(TableClient tableClient)
     {
-        var tableClient = new TableClient("DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=kantinestorage;AccountKey=c5eYXG6dgGxG7L4xUtAJ02pz4FoGOsiYisQNTuD3G4rYaS2xQ1LmgX1re/RnUlRBtkrJtRY70jTv+ASthJdyZA==;BlobEndpoint=https://kantinestorage.blob.core.windows.net/;FileEndpoint=https://kantinestorage.file.core.windows.net/;QueueEndpoint=https://kantinestorage.queue.core.windows.net/;TableEndpoint=https://kantinestorage.table.core.windows.net/", "Menu");
-        
-        // Querying the data from the table
-        MenuItems = tableClient.Query<TableEntity>()
-            .Select(e => new MenuItem
+        _tableClient = tableClient;
+    }
+
+    public async Task OnGetAsync()
+    {
+        try
+        {
+            List<TableEntity> results = new List<TableEntity>();
+            AsyncPageable<TableEntity> queryResults = _tableClient.QueryAsync<TableEntity>();
+
+            await foreach (TableEntity entity in queryResults)
             {
-                RowKey = e.RowKey,
-                ColdDish = e.GetString("ColdDish"),
-                HotDish = e.GetString("HotDish")
-            }).ToList();
+                // Log each entity retrieved
+                Console.WriteLine($"Retrieved entity: {entity.RowKey}");
+                results.Add(entity);
+            }
 
-        // Define an array for the days of the week in the correct order
-        var daysOfWeek = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+            foreach (var entity in results)
+            {
+                MenuItems.Add(new MenuItem
+                {
+                    RowKey = entity.GetString("RowKey"),
+                    ColdDish = entity.GetString("ColdDish"),
+                    HotDish = entity.GetString("HotDish")
+                });
+            }
 
-        // Sort MenuItems based on the day of the week, using RowKey or another property to match the day
-        MenuItems = MenuItems.OrderBy(item => Array.IndexOf(daysOfWeek, item.RowKey)).ToList();
+            // Log the number of items retrieved
+            Console.WriteLine($"Retrieved {MenuItems.Count} menu items.");
+            foreach (var item in MenuItems)
+            {
+                Console.WriteLine($"RowKey: {item.RowKey}, ColdDish: {item.ColdDish}, HotDish: {item.HotDish}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log any exceptions
+            Console.WriteLine($"Error retrieving data: {ex.Message}");
+        }
     }
 }
 
